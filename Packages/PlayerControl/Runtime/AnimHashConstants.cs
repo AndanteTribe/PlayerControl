@@ -6,39 +6,39 @@ namespace PlayerControl
     /// <summary>
     /// Animation hash constant.
     /// </summary>
-    public sealed class AnimHashConstants
+    public static class AnimHashConstants
     {
         /// <summary>
         /// "Speed" animation hash.
         /// </summary>
-        public readonly int Speed;
+        public static readonly int Speed;
 
         /// <summary>
         /// "IsGround" animation hash.
         /// </summary>
-        public readonly int IsGround;
+        public static readonly int IsGround;
 
         /// <summary>
         /// "JumpStart" animation hash.
         /// </summary>
-        public readonly int JumpStart;
+        public static readonly int JumpStart;
 
         /// <summary>
         /// "DoubleJump" animation hash.
         /// </summary>
-        public readonly int DoubleJump;
+        public static readonly int DoubleJump;
 
         /// <summary>
         /// "Forward" animation hash.
         /// </summary>
-        public readonly int Forward;
+        public static readonly int Forward;
 
         /// <summary>
         /// "SideStep" animation hash.
         /// </summary>
-        public readonly int SideStep;
+        public static readonly int SideStep;
 
-        internal AnimHashConstants()
+        static AnimHashConstants()
         {
             Speed = Animator.StringToHash(nameof(Speed));
             IsGround = Animator.StringToHash(nameof(IsGround));
@@ -48,7 +48,7 @@ namespace PlayerControl
             SideStep = Animator.StringToHash(nameof(SideStep));
         }
 
-        public override string ToString()
+        public static string AnimToString()
         {
             StringBuilder builder = new StringBuilder(163);
             builder.Append(nameof(AnimHashConstants));

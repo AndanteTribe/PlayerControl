@@ -30,7 +30,7 @@ namespace PlayerControl
         /// </summary>
         public event Action OnRelease;
 
-        private EventSystem eventSystem;
+        private EventSystem _eventSystem;
 
         /// <inheritdoc />
         public override void OnPointerDown(PointerEventData eventData)
@@ -56,8 +56,8 @@ namespace PlayerControl
             {
                 if (finger.currentTouch.touchId != TouchId) return;
                 IsUsing = false;
-                eventSystem ??= EventSystem.current;
-                base.OnPointerUp(new PointerEventData(eventSystem) {button = PointerEventData.InputButton.Left});
+                _eventSystem ??= EventSystem.current;
+                base.OnPointerUp(new PointerEventData(_eventSystem) {button = PointerEventData.InputButton.Left});
                 OnRelease?.Invoke();
                 Touch.onFingerUp -= OnFingerUp;
             }

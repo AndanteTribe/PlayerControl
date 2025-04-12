@@ -10,17 +10,17 @@ namespace PlayerControl
     public class MinimumVirtualJoyStick : MonoBehaviour, IPointerDownHandler
     {
         [SerializeField, Min(0)]
-        private float movementRange = 50;
+        private float _movementRange = 50;
 
         [SerializeField]
-        private RectTransform handle;
+        private RectTransform _handle;
 
         [SerializeField]
-        private RectTransform background;
+        private RectTransform _background;
 
-        private Vector3 startPos;
-        private Vector2 pointerDownPos;
-        private Camera pressEventCamera;
+        private Vector3 _startPos;
+        private Vector2 _pointerDownPos;
+        private Camera _pressEventCamera;
 
         /// <summary>
         /// The ID of the touch that is currently using the control.
@@ -40,7 +40,7 @@ namespace PlayerControl
         /// <summary>
         /// The distance from the onscreen control's center of origin, around which the control can move.
         /// </summary>
-        public ref float MovementRange => ref movementRange;
+        public float MovementRange => _movementRange;
 
         /// <inheritdoc />
         void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
@@ -51,7 +51,7 @@ namespace PlayerControl
             }
 
             IsUsing = true;
-            pressEventCamera = eventData.pressEventCamera;
+            _pressEventCamera = eventData.pressEventCamera;
 
             Vector2 screenPoint = eventData.position;
             if (TouchUtility.TryGetApproximatelyActiveTouch(screenPoint, out Touch touch))
@@ -61,7 +61,7 @@ namespace PlayerControl
             }
 
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                background, screenPoint, pressEventCamera, out pointerDownPos);
+                _background, screenPoint, _pressEventCamera, out _pointerDownPos);
 
             Touch.onFingerMove += OnFingerMove;
 
@@ -72,10 +72,10 @@ namespace PlayerControl
                 if (finger.currentTouch.touchId == TouchId)
                 {
                     RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                        background, finger.screenPosition, pressEventCamera, out Vector2 position);
+                        _background, finger.screenPosition, _pressEventCamera, out Vector2 position);
 
-                    Vector2 delta = Vector2.ClampMagnitude(position - pointerDownPos, MovementRange);
-                    handle.anchoredPosition = (Vector2)startPos + delta;
+                    Vector2 delta = Vector2.ClampMagnitude(position - _pointerDownPos, MovementRange);
+                    _handle.anchoredPosition = (Vector2)_startPos + delta;
                     OnValueChanged?.Invoke(delta / MovementRange);
                 }
             }
@@ -84,7 +84,7 @@ namespace PlayerControl
             {
                 if (finger.currentTouch.touchId == TouchId)
                 {
-                    handle.anchoredPosition = pointerDownPos = startPos;
+                    _handle.anchoredPosition = _pointerDownPos = _startPos;
                     OnValueChanged?.Invoke(Vector2.zero);
                     IsUsing = false;
                     Touch.onFingerMove -= OnFingerMove;
@@ -93,7 +93,7 @@ namespace PlayerControl
             }
         }
 
-        private void Start() => startPos = handle.anchoredPosition;
+        private void Start() => _startPos = _handle.anchoredPosition;
 
         private void OnEnable() => EnhancedTouchSupport.Enable();
 

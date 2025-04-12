@@ -23,41 +23,34 @@ namespace PlayerControl
     [RequireComponent(typeof(TpsCameraControl))]
     public class PlayerController : MonoBehaviour
     {
-        private readonly Lazy<AnimHashConstants> constants = new (static () => new AnimHashConstants());
+        [SerializeField]
+        private Animator _animator;
+        [SerializeField]
+        private PlayerInput _playerInput;
+        [SerializeField]
+        private MoveControl _moveControl;
+        [SerializeField]
+        private JumpControl _jumpControl;
+        [SerializeField]
+        private GroundCheck _groundCheck;
+        [SerializeField]
+        private TpsCameraControl _cameraControl;
+        private new ITransform _transform;
+        private IWarp _warp;
 
-        [SerializeField]
-        private Animator animator;
-        [SerializeField]
-        private PlayerInput playerInput;
-        [SerializeField]
-        private MoveControl moveControl;
-        [SerializeField]
-        private JumpControl jumpControl;
-        [SerializeField]
-        private GroundCheck groundCheck;
-        [SerializeField]
-        private TpsCameraControl cameraControl;
-        private new ITransform transform;
-        private IWarp warp;
-
-        public ref readonly Animator Animator => ref animator;
-        public ref readonly PlayerInput PlayerInput => ref playerInput;
-        public ref readonly MoveControl MoveControl => ref moveControl;
-        public ref readonly JumpControl JumpControl => ref jumpControl;
-        public ref readonly GroundCheck GroundCheck => ref groundCheck;
-        public ref readonly TpsCameraControl CameraControl => ref cameraControl;
-        public ref readonly ITransform Transform => ref transform;
-        public ref readonly IWarp Warp => ref warp;
+        public Animator Animator => _animator;
+        public PlayerInput PlayerInput => _playerInput;
+        public MoveControl MoveControl => _moveControl;
+        public JumpControl JumpControl => _jumpControl;
+        public GroundCheck GroundCheck => _groundCheck;
+        public TpsCameraControl CameraControl => _cameraControl;
+        public ITransform Transform => _transform;
+        public IWarp Warp => _warp;
 
         /// <summary>
         /// The event that is triggered when the player jumps.
         /// </summary>
         public ref readonly UnityEngine.Events.UnityEvent OnJumped => ref JumpControl.OnJump;
-
-        /// <summary>
-        /// The constants for the animation hash.
-        /// </summary>
-        public AnimHashConstants Constants => constants.Value;
 
         /// <summary>
         /// Whether the player is performing a double jump.
@@ -154,12 +147,12 @@ namespace PlayerControl
         {
             if (TryGetComponent(out BrainBase brain))
             {
-                (transform, warp) = (brain, brain);
+                (_transform, _warp) = (brain, brain);
             }
             else
             {
-                TryGetComponent(out transform);
-                TryGetComponent(out warp);
+                TryGetComponent(out _transform);
+                TryGetComponent(out _warp);
             }
             PlayerInput.onActionTriggered += context => OnActionTriggered(context);
             JumpControl.OnJump.AddListener(OnJump);
@@ -167,13 +160,13 @@ namespace PlayerControl
 
         protected virtual void Update()
         {
-            Animator.SetFloat(Constants.Speed, CurrentSpeed);
-            Animator.SetBool(Constants.IsGround, IsOnGround);
+            Animator.SetFloat(AnimHashConstants.Speed, CurrentSpeed);
+            Animator.SetBool(AnimHashConstants.IsGround, IsOnGround);
 
             Vector3 currentDirection = LocalDirection;
             float deltaTime = Time.deltaTime;
-            Animator.SetFloat(Constants.Forward, currentDirection.z, MoveDampTime, deltaTime);
-            Animator.SetFloat(Constants.SideStep, currentDirection.x, MoveDampTime, deltaTime);
+            Animator.SetFloat(AnimHashConstants.Forward, currentDirection.z, MoveDampTime, deltaTime);
+            Animator.SetFloat(AnimHashConstants.SideStep, currentDirection.x, MoveDampTime, deltaTime);
         }
 
         protected virtual void OnActionTriggered(in CallbackContext context)
@@ -200,6 +193,6 @@ namespace PlayerControl
             }
         }
 
-        protected virtual void OnJump() => Animator.Play(IsDoubleJump ? Constants.DoubleJump : Constants.JumpStart);
+        protected virtual void OnJump() => Animator.Play(IsDoubleJump ? AnimHashConstants.DoubleJump : AnimHashConstants.JumpStart);
     }
 }

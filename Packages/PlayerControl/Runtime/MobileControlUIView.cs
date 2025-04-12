@@ -9,27 +9,27 @@ namespace PlayerControl
     public class MobileControlUIView : MonoBehaviour
     {
         [SerializeField]
-        private MinimumVirtualJoyStick joystick = null;
+        private MinimumVirtualJoyStick _joystick = null;
 
         [SerializeField]
-        private MinimumHoldButton sprintButton = null;
+        private MinimumHoldButton _sprintButton = null;
 
         [SerializeField]
-        private Button jumpButton = null;
+        private Button _jumpButton = null;
 
         /// <summary>
         /// Gets the joystick.
         /// </summary>
-        public ref readonly MinimumVirtualJoyStick Joystick => ref joystick;
+        public MinimumVirtualJoyStick Joystick => _joystick;
 
         /// <summary>
         /// Gets the sprint button.
         /// </summary>
-        public ref readonly MinimumHoldButton SprintButton => ref sprintButton;
+        public MinimumHoldButton SprintButton => _sprintButton;
 
         /// <summary>
         /// Gets the jump button.
         /// </summary>
-        public ref readonly Button JumpButton => ref jumpButton;
+        public Button JumpButton => _jumpButton;
     }
 }

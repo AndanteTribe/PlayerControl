@@ -10,42 +10,42 @@ namespace PlayerControl
     public class MobilePlayerController : PlayerController
     {
         [SerializeField]
-        private MobileControlUIView uiView;
+        private MobileControlUIView _uiView;
 
         [Header("Processors")]
         [SerializeReference]
-        private InvertVector2Processor invertProcessor = new () { invertX = false, invertY = true };
+        private InvertVector2Processor _invertProcessor = new () { invertX = false, invertY = true };
 
         [SerializeReference]
-        private ScaleVector2Processor scaleProcessor = new () { x = 15.0f, y = 15.0f };
+        private ScaleVector2Processor _scaleProcessor = new () { x = 15.0f, y = 15.0f };
 
         [Header("Debug Options")]
         [SerializeField]
         [Tooltip("If true, the look action will be triggered when the mouse changes direction.")]
-        private bool isDebug = false;
+        private bool _isDebug = false;
 
         /// <summary>
         /// Operation UI for Mobile.
         /// </summary>
         public virtual MobileControlUIView UIView
         {
-            get => uiView;
+            get => _uiView;
             set
             {
-                uiView = value;
-                uiView.Joystick.OnValueChanged += value =>
+                _uiView = value;
+                _uiView.Joystick.OnValueChanged += value =>
                 {
                     base.OnActionTriggered(new CallbackContext(Move, InputActionPhase.Performed, value));
                 };
-                uiView.SprintButton.OnStart += () =>
+                _uiView.SprintButton.OnStart += () =>
                 {
                     base.OnActionTriggered(new CallbackContext(Sprint, InputActionPhase.Performed));
                 };
-                uiView.SprintButton.OnRelease += () =>
+                _uiView.SprintButton.OnRelease += () =>
                 {
                     base.OnActionTriggered(new CallbackContext(Sprint, InputActionPhase.Canceled));
                 };
-                uiView.JumpButton.onClick.AddListener(() =>
+                _uiView.JumpButton.onClick.AddListener(() =>
                 {
                     base.OnActionTriggered(new CallbackContext(Jump, InputActionPhase.Started));
                 });
@@ -59,9 +59,9 @@ namespace PlayerControl
         protected override void Start()
         {
             base.Start();
-            if (uiView != null)
+            if (_uiView != null)
             {
-                UIView = uiView;
+                UIView = _uiView;
             }
         }
 
@@ -69,11 +69,11 @@ namespace PlayerControl
         {
             base.Update();
             var activeTouches = Touch.activeTouches;
-            ReadOnlySpan<int> avoidTouchIds = (uiView.Joystick.IsUsing, uiView.SprintButton.IsUsing) switch
+            ReadOnlySpan<int> avoidTouchIds = (_uiView.Joystick.IsUsing, _uiView.SprintButton.IsUsing) switch
             {
-                (true, true) => stackalloc int[] { uiView.Joystick.TouchId, uiView.SprintButton.TouchId },
-                (true, false) => stackalloc int[] { uiView.Joystick.TouchId },
-                (false, true) => stackalloc int[] { uiView.SprintButton.TouchId },
+                (true, true) => stackalloc int[] { _uiView.Joystick.TouchId, _uiView.SprintButton.TouchId },
+                (true, false) => stackalloc int[] { _uiView.Joystick.TouchId },
+                (false, true) => stackalloc int[] { _uiView.SprintButton.TouchId },
                 _ => ReadOnlySpan<int>.Empty
             };
             if (activeTouches.Count <= avoidTouchIds.Length) return;
@@ -82,8 +82,8 @@ namespace PlayerControl
                 if (avoidTouchIds.IndexOf(touch.touchId) == -1)
                 {
                     Vector2 delta = touch.delta;
-                    delta = invertProcessor.Process(delta, null);
-                    delta = scaleProcessor.Process(delta, null);
+                    delta = _invertProcessor.Process(delta, null);
+                    delta = _scaleProcessor.Process(delta, null);
                     base.OnActionTriggered(new CallbackContext(Look, InputActionPhase.Performed, delta));
                     break;
                 }
@@ -95,7 +95,7 @@ namespace PlayerControl
             if (context.CompareActionName(Look))
             {
 #if UNITY_EDITOR
-                if (!isDebug)
+                if (!_isDebug)
                 {
                     return;
                 }
