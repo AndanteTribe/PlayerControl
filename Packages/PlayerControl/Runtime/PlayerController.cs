@@ -47,6 +47,20 @@ namespace PlayerControl
         public PlayerInput PlayerInput => _playerInput;
 
         /// <summary>
+        /// character movement speed
+        /// </summary>
+        public float DefaultMoveSpeed
+        {
+            get => _moveControl.MoveSpeed;
+            set => _moveControl.MoveSpeed = value;
+        }
+
+        /// <summary>
+        /// character dash speed
+        /// </summary>
+        public float DashMoveSpeed { get; set; } = 4.0f;
+
+        /// <summary>
         /// Whether the player can perform a double jump.
         /// </summary>
         public bool CanDoubleJump { get; set; } = true;
@@ -125,13 +139,13 @@ namespace PlayerControl
             var currentDirection = LocalDirection;
             var deltaTime = Time.deltaTime;
             const float dampTime = 0.1f;
+
             _animator.SetFloat(Constants.Hash.Forward, currentDirection.z, dampTime, deltaTime);
             _animator.SetFloat(Constants.Hash.SideStep, currentDirection.x, dampTime, deltaTime);
         }
 
         private void OnActionTriggered(InputAction.CallbackContext context)
         {
-            Debug.Log($"Action triggered: {context.action.name}, Phase: {context.phase}");
             switch (context.action.name)
             {
                 case Constants.Action.Move when context.phase is InputActionPhase.Performed or InputActionPhase.Canceled:
@@ -144,10 +158,10 @@ namespace PlayerControl
                     _jumpControl.Jump();
                     break;
                 case Constants.Action.Sprint when context.phase is InputActionPhase.Performed:
-                    _moveControl.MoveSpeed = 4.0f;
+                    _moveControl.MoveSpeed = DashMoveSpeed;
                     break;
                 case Constants.Action.Sprint when context.phase is InputActionPhase.Canceled:
-                    _moveControl.MoveSpeed = 1.2f;
+                    _moveControl.MoveSpeed = DefaultMoveSpeed;
                     break;
             }
         }
