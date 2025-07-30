@@ -47,18 +47,13 @@ namespace PlayerControl
         public PlayerInput PlayerInput => _playerInput;
 
         /// <summary>
-        /// character movement speed
+        /// The speed of the player when moving normally.
         /// </summary>
-        public float DefaultMoveSpeed
-        {
-            get => _moveControl.MoveSpeed;
-            set => _moveControl.MoveSpeed = value;
-        }
-
+        public float DefaultSpeed { get; set; } = 1.2f;
         /// <summary>
-        /// character dash speed
+        /// The speed of the player when sprinting.
         /// </summary>
-        public float DashMoveSpeed { get; set; } = 4.0f;
+        public float SprintSpeed { get; set; } = 4.0f;
 
         /// <summary>
         /// Whether the player can perform a double jump.
@@ -158,10 +153,10 @@ namespace PlayerControl
                     _jumpControl.Jump();
                     break;
                 case Constants.Action.Sprint when context.phase is InputActionPhase.Performed:
-                    _moveControl.MoveSpeed = DashMoveSpeed;
+                    _moveControl.MoveSpeed = SprintSpeed;
                     break;
                 case Constants.Action.Sprint when context.phase is InputActionPhase.Canceled:
-                    _moveControl.MoveSpeed = DefaultMoveSpeed;
+                    _moveControl.MoveSpeed = DefaultSpeed;
                     break;
             }
         }
